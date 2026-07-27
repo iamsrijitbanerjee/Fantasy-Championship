@@ -3,597 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SORARE WORLD CUP | Cyber Championship Terminal</title>
+    <title>SORARE Contest</title>
+    
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23050811' stroke='%23FFD700' stroke-width='4'/><path d='M50 25 L30 40 L38 65 L62 65 L70 40 Z' fill='none' stroke='%23FFD700' stroke-width='3'/><path d='M50 4 L50 25 M14 30 L30 40 M30 92 L38 65 M70 92 L62 65 M86 30 L70 40' stroke='%23FFD700' stroke-width='3'/></svg>">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
     
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --pitch-black: #05070f;
-            --stadium-grey: #0c101d;
-            --card-glass: rgba(14, 23, 46, 0.85);
-            --border-neon: #1d355a;
-            --neon-turf: #00FF66;
-            --neon-glow: 0 0 15px rgba(0, 255, 102, 0.4);
-            --cyber-cyan: #00E5FF;
-            --cyber-cyan-glow: 0 0 15px rgba(0, 229, 255, 0.4);
-            --danger-zone: #FF3366;
-            --danger-glow: 0 0 15px rgba(255, 51, 102, 0.4);
-            --podium-gold: #FFD700;
-            --podium-gold-glow: 0 0 20px rgba(255, 215, 0, 0.5);
-            --podium-silver: #E0E0E0;
-            --podium-bronze: #CD7F32;
-            --text-main: #FFFFFF;
-            --text-muted: #8FA3BF;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--pitch-black);
-            color: var(--text-main);
-            padding: 0;
-            min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.12), transparent 60%),
-                radial-gradient(circle at 100% 100%, rgba(0, 255, 102, 0.04), transparent 40%),
-                linear-gradient(rgba(255, 255, 255, 0.003) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.003) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 45px 45px, 45px 45px;
-        }
-
-        .live-ticker {
-            background: #010307;
-            border-bottom: 1px solid var(--podium-gold);
-            padding: 0.75rem 1rem;
-            overflow: hidden;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .ticker-badge {
-            background: var(--podium-gold);
-            color: #000;
-            padding: 0.25rem 0.6rem;
-            font-size: 0.7rem;
-            font-weight: 800;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
-            flex-shrink: 0;
-        }
-
-        .ticker-wrap {
-            display: inline-block;
-            animation: marquee 32s linear infinite;
-            color: var(--podium-gold);
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        @keyframes marquee {
-            0% { transform: translate3d(60%, 0, 0); }
-            100% { transform: translate3d(-100%, 0, 0); }
-        }
-
-        .wrapper {
-            max-width: 1450px;
-            margin: 0 auto;
-            padding: 1.2rem;
-        }
-
-        header {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-            padding: 1.5rem;
-            background: linear-gradient(180deg, var(--stadium-grey), rgba(11, 15, 25, 0.6));
-            border: 1px solid var(--podium-gold);
-            border-radius: 16px;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--podium-gold-glow);
-        }
-
-        @media(min-width: 768px) {
-            header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
-        .brand-zone {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .pulse-dot {
-            width: 12px;
-            height: 12px;
-            background-color: var(--podium-gold);
-            border-radius: 50%;
-            box-shadow: 0 0 12px var(--podium-gold);
-            animation: pulseGlow 2s infinite;
-        }
-
-        @keyframes pulseGlow {
-            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.5); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px transparent; }
-            100% { transform: scale(0.9); box-shadow: 0 0 0 0 transparent; }
-        }
-
-        h1 {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 2.2rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            line-height: 1;
-        }
-
-        h1 span {
-            color: var(--podium-gold);
-            text-shadow: var(--podium-gold-glow);
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 0.4rem;
-            background: #02040a;
-            padding: 0.3rem;
-            border-radius: 10px;
-            border: 1px solid var(--border-neon);
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .nav-tabs::-webkit-scrollbar { display: none; }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 0.7rem 1.2rem;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            font-family: 'Rajdhani', sans-serif;
-            white-space: nowrap;
-        }
-
-        .tab-btn.active, .tab-btn:hover {
-            background: rgba(255, 215, 0, 0.1);
-            color: var(--podium-gold);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-        }
-
-        /* Grand Champions Podium Section */
-        .champions-banner {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(12, 16, 29, 0.9) 50%, rgba(0, 229, 255, 0.1) 100%);
-            border: 2px solid var(--podium-gold);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--podium-gold-glow);
-            text-align: center;
-        }
-
-        .champions-title {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--podium-gold);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-        }
-
-        .podium-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .podium-card {
-            background: rgba(6, 8, 19, 0.7);
-            border: 1px solid var(--border-neon);
-            border-radius: 12px;
-            padding: 1rem;
-            transition: transform 0.3s ease;
-        }
-
-        .podium-card.winner {
-            border-color: var(--podium-gold);
-            background: linear-gradient(180deg, rgba(255, 215, 0, 0.15), rgba(6, 8, 19, 0.9));
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-
-        .podium-card.runner-up {
-            border-color: var(--podium-silver);
-            background: linear-gradient(180deg, rgba(224, 224, 224, 0.1), rgba(6, 8, 19, 0.9));
-        }
-
-        .podium-card.second-runner-up {
-            border-color: var(--podium-bronze);
-            background: linear-gradient(180deg, rgba(205, 127, 50, 0.1), rgba(6, 8, 19, 0.9));
-        }
-
-        .podium-rank {
-            font-size: 2rem;
-            margin-bottom: 0.2rem;
-        }
-
-        .podium-team-name {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #fff;
-        }
-
-        .podium-title-tag {
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 0.3rem;
-        }
-
-        .podium-card.winner .podium-title-tag { color: var(--podium-gold); }
-        .podium-card.runner-up .podium-title-tag { color: var(--podium-silver); }
-        .podium-card.second-runner-up .podium-title-tag { color: var(--podium-bronze); }
-
-        .press-room-banner {
-            background: linear-gradient(90deg, rgba(255, 215, 0, 0.08), transparent);
-            border-left: 4px solid var(--podium-gold);
-            padding: 1rem;
-            border-radius: 0 12px 12px 0;
-            margin-bottom: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .press-room-title {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: var(--podium-gold);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .press-room-quote {
-            font-style: italic;
-            font-size: 0.95rem;
-            color: var(--text-main);
-        }
-
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-
-        @media (min-width: 1200px) {
-            .main-layout { grid-template-columns: 2.4fr 1.1fr; }
-        }
-
-        .card {
-            background: var(--card-glass);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid var(--border-neon);
-            border-radius: 16px;
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-            transition: border-color 0.3s ease;
-        }
-
-        .card:hover { border-color: rgba(255, 215, 0, 0.3); }
-
-        .card-title {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-            border-bottom: 1px solid rgba(31, 51, 84, 0.4);
-            padding-bottom: 0.6rem;
-        }
-
-        @media(min-width: 480px) {
-            .card-title {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
-        .table-container { 
-            overflow-x: auto;
-            margin: 0 -1.2rem;
-            padding: 0 1.2rem;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 0.5rem;
-            min-width: 850px;
-        }
-
-        th {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            padding: 0.6rem 0.8rem;
-            letter-spacing: 0.5px;
-        }
-
-        td {
-            padding: 0.9rem 0.8rem;
-            background: rgba(10, 16, 31, 0.7);
-            border-top: 1px solid var(--border-neon);
-            border-bottom: 1px solid var(--border-neon);
-            font-size: 0.9rem;
-        }
-
-        td:first-child { border-left: 1px solid var(--border-neon); border-radius: 10px 0 0 10px; }
-        td:last-child { border-right: 1px solid var(--border-neon); border-radius: 0 10px 10px 0; }
-
-        tr.interactive-row { cursor: pointer; }
-        tr.interactive-row:hover td {
-            background: rgba(255, 215, 0, 0.04);
-            border-color: rgba(255, 215, 0, 0.3);
-        }
-
-        tr.active-row td {
-            background: rgba(255, 215, 0, 0.08) !important;
-            border-color: var(--podium-gold) !important;
-        }
-
-        .rank-box {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 28px; height: 28px;
-            font-weight: 800; border-radius: 6px;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border-neon);
-        }
-
-        tr:nth-child(1) .rank-box { border-color: var(--podium-gold); color: var(--podium-gold); background: rgba(255, 215, 0, 0.12); box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
-        tr:nth-child(2) .rank-box { border-color: var(--podium-silver); color: var(--podium-silver); background: rgba(224, 224, 224, 0.08); }
-        tr:nth-child(3) .rank-box { border-color: var(--podium-bronze); color: var(--podium-bronze); background: rgba(205, 127, 50, 0.08); }
-
-        .club-title { font-weight: 700; font-family: 'Rajdhani'; font-size: 1.15rem; color: #fff; }
-        .score-badge { font-weight: 800; color: var(--neon-turf); background: rgba(0, 255, 102, 0.08); padding: 0.25rem 0.5rem; border-radius: 6px; border: 1px solid rgba(0, 255, 102, 0.2); text-shadow: var(--neon-glow); }
-        .bonus-badge { font-weight: 700; color: var(--cyber-cyan); background: rgba(0, 229, 255, 0.08); padding: 0.25rem 0.5rem; border-radius: 6px; border: 1px solid rgba(0, 229, 255, 0.2); }
-
-        .streak-container-box {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        .streak-row-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background: rgba(4, 7, 15, 0.5);
-            border: 1px solid var(--border-neon);
-            border-radius: 10px;
-        }
-        .streak-club-info {
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            font-size: 1.05rem;
-        }
-        .streak-pills-holder {
-            display: flex;
-            gap: 0.4rem;
-        }
-        .streak-pill-item {
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            text-transform: uppercase;
-        }
-        .streak-win { background: rgba(0, 255, 102, 0.1); border: 1px solid var(--neon-turf); color: var(--neon-turf); box-shadow: var(--neon-glow); }
-        .streak-podium { background: rgba(0, 229, 255, 0.1); border: 1px solid var(--cyber-cyan); color: var(--cyber-cyan); box-shadow: var(--cyber-cyan-glow); }
-        .streak-last { background: rgba(255, 51, 102, 0.1); border: 1px solid var(--danger-zone); color: var(--danger-zone); box-shadow: var(--danger-glow); }
-        
-        .blink-critical-text {
-            animation: textBlinkGlow 1.2s infinite alternate;
-        }
-        @keyframes textBlinkGlow {
-            0% { opacity: 0.6; text-shadow: none; }
-            100% { opacity: 1; text-shadow: 0 0 8px #FF3366; }
-        }
-
-        /* FUT Shield System Interface */
-        .fut-card-wrapper {
-            display: flex;
-            justify-content: center;
-            margin: 1rem 0;
-        }
-        .fut-card {
-            position: relative;
-            width: 275px;
-            height: 400px;
-            background: linear-gradient(135deg, #111a30 0%, #040712 100%);
-            border: 3px solid var(--cyber-cyan);
-            border-radius: 24px;
-            box-shadow: 0 0 25px var(--cyber-cyan-glow);
-            overflow: hidden;
-            padding: 1.4rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-image: radial-gradient(circle at 50% 30%, rgba(0, 229, 255, 0.05), transparent 70%);
-        }
-        .fut-card.gold-tier {
-            background: linear-gradient(135deg, #2b1f09 0%, #060812 100%);
-            border-color: var(--podium-gold);
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.35);
-            background-image: radial-gradient(circle at 50% 30%, rgba(255, 215, 0, 0.05), transparent 70%);
-        }
-        .fut-header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.2rem;
-        }
-        .fut-ovr-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .fut-ovr-val {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 3.2rem;
-            font-weight: 800;
-            line-height: 0.9;
-            color: #fff;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-        .fut-card.gold-tier .fut-ovr-val { color: var(--podium-gold); }
-        .fut-pos-label {
-            font-size: 0.8rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-            margin-top: 0.2rem;
-        }
-        .fut-badge-slot {
-            width: 45px;
-            height: 45px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-neon);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.4rem;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
-        .fut-card.gold-tier .fut-badge-slot { border-color: rgba(255, 215, 0, 0.2); }
-        
-        .fut-avatar-hull {
-            width: 95px;
-            height: 95px;
-            margin-top: -0.8rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-        .fut-silhouette-vector {
-            width: 100%;
-            height: 100%;
-            opacity: 0.35;
-            background: var(--text-muted);
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            background: linear-gradient(180deg, var(--text-muted), transparent);
-        }
-        .fut-card.gold-tier .fut-silhouette-vector {
-            background: linear-gradient(180deg, var(--podium-gold), transparent);
-            opacity: 0.25;
-        }
-
-        .fut-manager-title {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            margin: 0.6rem 0;
-            letter-spacing: 0.5px;
-            color: #fff;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            width: 100%;
-            text-align: center;
-            padding-bottom: 0.4rem;
-        }
-        .fut-stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            width: 100%;
-            gap: 0.5rem 1.4rem;
-            margin-top: 0.2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            padding-bottom: 0.7rem;
-        }
-        .fut-stat-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .fut-stat-lbl {
-            color: var(--text-muted);
-            font-weight: 700;
-            font-size: 0.85rem;
-            font-family: 'Rajdhani', sans-serif;
-        }
-        .fut-stat-val {
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 800;
-            color: #fff;
-            font-size: 1.15rem;
-        }
-        .fut-card.gold-tier .fut-stat-val { color: rgba(255,255,255,0.95); }
-        
-        .fut-stats-filler {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 0.8rem;
-            font-weight: 700;
-            font-family: 'Rajdhani', sans-serif;
-            letter-spacing: 0.3px;
-        }
-        .fut-stats-filler span b {
-            color: #fff;
-            font-size: 0.9rem;
-        }
-        .fut-card.gold-tier .fut-stats-filler span b { color: var(--podium-gold); }
-
-        .hidden-view { display: none; }
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-    </style>
 </head>
 <body>
 
@@ -610,18 +29,18 @@
                 <div class="pulse-dot"></div>
                 <h1>Sorare <span>World Cup</span> Terminal</h1>
             </div>
-            <div style="font-family: 'Rajdhani'; font-weight: 800; font-size: 1.2rem; color: var(--podium-gold); text-transform: uppercase;" id="latestGlobalRound">
+            <div class="global-round-status" id="latestGlobalRound">
                 Global Camp: Tournament Concluded
             </div>
-            <div class="nav-tabs">
+            <nav class="nav-tabs">
                 <button class="tab-btn active" onclick="toggleView('championship-tab')">Home Arena</button>
                 <button class="tab-btn" onclick="toggleView('milestone-tab')">Milestone Matrix</button>
                 <button class="tab-btn" onclick="toggleView('radar-tab')">Tactical Derby Radar</button>
-            </div>
+            </nav>
         </header>
 
         <div class="champions-banner">
-            <div class="champions-title">🏆 Hall of Champions & Official Final Podium 🏆</div>
+            <h2 class="champions-title">🏆 Hall of Champions & Official Final Podium 🏆</h2>
             <div class="podium-grid">
                 <div class="podium-card runner-up">
                     <div class="podium-rank">🥈</div>
@@ -642,17 +61,17 @@
         </div>
 
         <div class="press-room-banner" id="pressRoomSection">
-            <div class="press-room-title">🎤 Post-Match Press Room // Winner Commentary</div>
-            <div class="press-room-quote" id="winnerQuoteField">"Points fade into the background of history, but the clarity of vision remains immortal" — Srijit FC (Champion)</div>
+            <h3 class="press-room-title">🎤 Post-Match Press Room // Winner Commentary</h3>
+            <p class="press-room-quote" id="winnerQuoteField">"Points fade into the background of history, but the clarity of vision remains immortal" — Srijit FC (Champion)</p>
         </div>
 
-        <div class="main-layout">
+        <main class="main-layout">
             
-            <section>
-                <div id="championship-tab" class="card">
-                    <div class="card-title">
-                        <span>🏆 Final Championship Leaderboard</span>
-                        <span id="syncIndicator" style="font-size: 0.75rem; color: var(--podium-gold); font-weight: 600;">Status: Final Standings Locked</span>
+            <section class="left-col">
+                <div id="championship-tab" class="data-card">
+                    <div class="card-header">
+                        <h2>🏆 Final Championship Leaderboard</h2>
+                        <span id="syncIndicator" class="sync-status">Status: Final Standings Locked</span>
                     </div>
                     <div class="table-container">
                         <table>
@@ -672,68 +91,70 @@
                                     <th class="text-right">Total Pts</th>
                                 </tr>
                             </thead>
-                            <tbody id="leagueRows">
-                            </tbody>
+                            <tbody id="leagueRows"></tbody>
                         </table>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-title">
-                        <span>⚡ Final Season Streak Radar</span>
-                        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">End of Campaign Hot/Cold Records</span>
+                <div class="data-card">
+                    <div class="card-header">
+                        <h2>⚡ Final Season Streak Radar</h2>
+                        <span class="sub-label">End of Campaign Hot/Cold Records</span>
                     </div>
-                    <div class="streak-container-box" id="streakWatchoutContainer">
-                    </div>
+                    <div class="streak-container-box" id="streakWatchoutContainer"></div>
                 </div>
 
-                <div id="milestone-tab" class="card hidden-view">
-                    <div class="card-title">⚡ Raw Gameweek Breakthrough Frequencies</div>
+                <div id="milestone-tab" class="data-card hidden-view">
+                    <div class="card-header">
+                        <h2>⚡ Raw Gameweek Frequencies</h2>
+                    </div>
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Club Squad</th>
-                                    <th class="text-center">300+ Tier Accolades</th>
-                                    <th class="text-center">350+ Tier Accolades</th>
-                                    <th class="text-center">400+ Tier Accolades</th>
-                                    <th class="text-center">450+ Tier Accolades</th>
+                                    <th class="text-center">300+ Tier</th>
+                                    <th class="text-center">350+ Tier</th>
+                                    <th class="text-center">400+ Tier</th>
+                                    <th class="text-center">450+ Tier</th>
                                 </tr>
                             </thead>
-                            <tbody id="milestoneRows">
-                            </tbody>
+                            <tbody id="milestoneRows"></tbody>
                         </table>
                     </div>
                 </div>
 
-                <div id="radar-tab" class="card hidden-view">
-                    <div class="card-title">⚔️ Championship Micro-Derbies</div>
-                    <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;" id="radarContainer">
+                <div id="radar-tab" class="data-card hidden-view">
+                    <div class="card-header">
+                        <h2>⚔️ Championship Micro-Derbies</h2>
                     </div>
+                    <div class="radar-grid" id="radarContainer"></div>
                 </div>
             </section>
 
-            <aside>
-                <div class="card">
-                    <div class="card-title">📊 Adaptive Points Guide</div>
-                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase; font-weight: bold;">Dynamic Distribution Scale</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.6rem;">
-                        🔹 <b>5 Participants:</b> 15, 10, 6, 4, 0<br>
-                        🔹 <b>6 Participants:</b> 15, 10, 6, 3, 1, 0
+            <aside class="right-col">
+                <div class="data-card">
+                    <div class="card-header"><h2>📊 Adaptive Points Guide</h2></div>
+                    <div class="guide-section">
+                        <h4>Dynamic Distribution Scale</h4>
+                        <p>🔹 <b>5 Participants:</b> 15, 10, 6, 4, 0<br>
+                           🔹 <b>6 Participants:</b> 15, 10, 6, 3, 1, 0</p>
                     </div>
-                    <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.3rem; font-weight: bold;">Tactical Streak System</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
-                        🔥 3x Victory Streak: <b style="color: var(--neon-turf)">+15 Pts</b><br>
-                        ⚡ 3x Podium Streak: <b style="color: var(--cyber-cyan)">+7 Pts</b><br>
-                        ⚠️ 3x Last Place Streak: <b style="color: var(--danger-zone)">-5 Pts</b><br>
-                        👑 Captain Match Winner: <b style="color: var(--podium-gold)">+3 Pts</b>
+                    <div class="guide-section">
+                        <h4>Tactical Streak System</h4>
+                        <p>
+                            🔥 3x Victory Streak: <b class="clr-turf">+15 Pts</b><br>
+                            ⚡ 3x Podium Streak: <b class="clr-cyan">+7 Pts</b><br>
+                            ⚠️ 3x Last Place Streak: <b class="clr-danger">-5 Pts</b><br>
+                            👑 Captain Match Winner: <b class="clr-gold">+3 Pts</b>
+                        </p>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-title">🔎 Interactive FUT Dossier</div>
+                <div class="data-card">
+                    <div class="card-header"><h2>🔎 Interactive FUT Dossier</h2></div>
                     <div id="spotlightContent">
-                        <p class="spotlight-desc" id="spotlightPromptText" style="text-align: center; color: var(--text-muted); margin: 2rem 0;">Select a manager row from the table grid to materialize their FUT gaming card metrics.</p>
+                        <p class="prompt-text" id="spotlightPromptText">Select a manager row from the table grid to materialize their FUT gaming card metrics.</p>
                         
                         <div class="fut-card-wrapper hidden-view" id="futCardContainer">
                             <div class="fut-card" id="futCardBody">
@@ -763,385 +184,41 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-title">⭐ Hall of Records & Cabinet</div>
-                    <div style="background: rgba(0,0,0,0.25); padding: 0.8rem; border-radius: 8px; border-left: 3px solid var(--podium-gold); margin-bottom: 0.8rem;">
-                        <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">All-Time Single Round Peak</div>
-                        <div style="font-size: 1.4rem; font-weight: 800; color: var(--podium-gold); font-family: 'Rajdhani'; text-shadow: var(--podium-gold-glow);">424 POINTS</div>
-                        <div style="font-size: 0.8rem; font-weight: 600;">Bitansh FC</div>
+                <div class="data-card records-card">
+                    <div class="card-header"><h2>⭐ Hall of Records & Cabinet</h2></div>
+                    
+                    <div class="record-highlight">
+                        <span class="rec-label">All-Time Single Round Peak</span>
+                        <div class="rec-value">424 POINTS</div>
+                        <div class="rec-holder">Bitansh FC</div>
                     </div>
-                    <div style="background: rgba(0,0,0,0.25); padding: 0.5rem 0.8rem; border-radius: 6px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
-                        🥈 Debarshi FC Peak: <b>415 Pts</b> | 🥉 Sandy FC Peak: <b>412 Pts</b>
+                    <div class="record-sub">
+                        🥈 Debarshi FC: <b>415 Pts</b> | 🥉 Sandy FC: <b>412 Pts</b>
                     </div>
                     
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
-                        <span style="color:var(--text-muted)">🏆 Serial Winner (Most 1sts)</span>
-                        <span style="font-weight: 700; color: var(--neon-turf);" id="serialWinnerField">-</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
-                        <span style="color:var(--text-muted)">🥇 Highest Podiums (Top 3s)</span>
-                        <span style="font-weight: 700; color: var(--cyber-cyan);" id="highestPodiumsField">-</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
-                        <span style="color:var(--text-muted)">Gutter Escape Expert (Most 4ths)</span>
-                        <span style="font-weight: 700; color: #FFA500;" id="escapeArtistField">-</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.6rem 0;">
-                        <span style="color:var(--text-muted)">☠️ Bottom Containment Risk</span>
-                        <span style="font-weight: 700; color: var(--danger-zone);" id="bottomContainmentField">-</span>
-                    </div>
+                    <ul class="record-list">
+                        <li>
+                            <span class="rec-name">🏆 Serial Winner (Most 1sts)</span>
+                            <span class="rec-stat clr-turf" id="serialWinnerField">-</span>
+                        </li>
+                        <li>
+                            <span class="rec-name">🥇 Highest Podiums (Top 3s)</span>
+                            <span class="rec-stat clr-cyan" id="highestPodiumsField">-</span>
+                        </li>
+                        <li>
+                            <span class="rec-name">Gutter Escape Expert (Most 4ths)</span>
+                            <span class="rec-stat" style="color:#FFA500" id="escapeArtistField">-</span>
+                        </li>
+                        <li class="no-border">
+                            <span class="rec-name">☠️ Bottom Containment Risk</span>
+                            <span class="rec-stat clr-danger" id="bottomContainmentField">-</span>
+                        </li>
+                    </ul>
                 </div>
             </aside>
-
-        </div>
+        </main>
     </div>
 
-    <script>
-        const SUPABASE_URL = "https://qtthaelgzxswjhbccrgi.supabase.co"; 
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0dGhhZWxnenhzd2poYmNjcmdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MjM1NDIsImV4cCI6MjA5ODQ5OTU0Mn0.4STLAIEEqmUOglGAsBp7rklU5udTpfZCyLtf9pr5aDg";              
-
-        const coreHistoricalBaseline = [
-            { id: "srijit", name: "Srijit FC", r1: 10, r2: 9, r3: 2, r4: 4, r5: 2, r6: 0, m300: 23, m350: 8, m400: 0, bonus: 0, text: "Official Champion. Leveraged high-win conversions and consistent tactical pace to seal the title.", currentWinStreak: 1, currentPodiumStreak: 2, currentLastStreak: 0, lastScores: [342, 311, 300] },
-            { id: "bitansh", name: "Bitansh FC", r1: 7, r2: 9, r3: 6, r4: 3, r5: 3, r6: 0, m300: 18, m350: 7, m400: 1, bonus: 0, text: "Official Runner Up. Holder of the highest single-round score (424 Pts).", currentWinStreak: 0, currentPodiumStreak: 0, currentLastStreak: 0, lastScores: [290, 315, 245] },
-            { id: "sandy", name: "Sandy FC", r1: 6, r2: 3, r3: 8, r4: 7, r5: 3, r6: 0, m300: 13, m350: 6, m400: 1, bonus: 0, text: "Official 2nd Runner Up. Solid midfield engine and high podium finish density.", currentWinStreak: 0, currentPodiumStreak: 0, currentLastStreak: 2, lastScores: [220, 240, 222] },
-            { id: "debarshi", name: "Debarshi FC", r1: 4, r2: 5, r3: 8, r4: 10, r5: 1, r6: 0, m300: 14, m350: 3, m400: 1, bonus: 3, text: "High variance danger asset with a 415 ceiling and low bottom-tier exposure.", currentWinStreak: 0, currentPodiumStreak: 1, currentLastStreak: 0, lastScores: [280, 260, 263] },
-            { id: "soumik", name: "Soumik FC", r1: 1, r2: 2, r3: 4, r4: 2, r5: 4, r6: 0, m300: 6, m350: 0, m400: 0, bonus: 0, text: "Resilient manager with solid captain bonus unlocks throughout the campaign.", currentWinStreak: 0, currentPodiumStreak: 2, currentLastStreak: 0, lastScores: [210, 255, 280] },
-            { id: "arkadeep", name: "Arkadeep FC", r1: 0, r2: 0, r3: 0, r4: 0, r5: 0, r6: 0, m300: 0, m350: 0, m400: 0, bonus: 3, text: "Expansion franchise preparing metrics for future campaigns.", currentWinStreak: 0, currentPodiumStreak: 0, currentLastStreak: 0, lastScores: [0, 0, 0] }
-        ];
-
-        let compiledStandings = [];
-
-        async function runChampionshipEngine() {
-            let processedCollection = [];
-
-            if (SUPABASE_URL.includes("your-project-id")) {
-                processedCollection = evaluateStandingsData(coreHistoricalBaseline);
-                updateDashboardLayout(processedCollection, 35);
-            } else {
-                try {
-                    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                    let { data: matchdays, error } = await supabaseClient.from('matchdays').select('*').order('round_number', { ascending: true });
-                    
-                    if (error || !matchdays || matchdays.length === 0) {
-                        document.getElementById("syncIndicator").innerText = "Status: Final Standings Locked";
-                        document.getElementById("syncIndicator").style.color = "var(--podium-gold)";
-                        processedCollection = evaluateStandingsData(coreHistoricalBaseline);
-                        updateDashboardLayout(processedCollection, 35);
-                    } else {
-                        document.getElementById("syncIndicator").innerText = "Sync Status: Cyber Cloud Synced";
-                        document.getElementById("syncIndicator").style.color = "var(--neon-turf)";
-                        
-                        const maxRoundNum = Math.max(...matchdays.map(r => r.round_number || 0)) + 29;
-                        processedCollection = parseAndInjectCloudRecords(matchdays);
-                        updateDashboardLayout(processedCollection, maxRoundNum);
-                        
-                        const lastWithQuote = [...matchdays].reverse().find(r => r.winner_quote);
-                        if (lastWithQuote) {
-                            document.getElementById("winnerQuoteField").innerText = `"${lastWithQuote.winner_quote}" — Srijit FC (Champion)`;
-                        }
-                    }
-                } catch(err) {
-                    processedCollection = evaluateStandingsData(coreHistoricalBaseline);
-                    updateDashboardLayout(processedCollection, 35);
-                }
-            }
-        }
-
-        function parseAndInjectCloudRecords(rows) {
-            const workingRegistry = {};
-            coreHistoricalBaseline.forEach(c => {
-                workingRegistry[c.id] = { ...c, lastScores: [...c.lastScores] };
-            });
-
-            const streakTracker = {
-                srijit: { win: workingRegistry.srijit.currentWinStreak, podium: workingRegistry.srijit.currentPodiumStreak, last: workingRegistry.srijit.currentLastStreak },
-                bitansh: { win: workingRegistry.bitansh.currentWinStreak, podium: workingRegistry.bitansh.currentPodiumStreak, last: workingRegistry.bitansh.currentLastStreak },
-                debarshi: { win: workingRegistry.debarshi.currentWinStreak, podium: workingRegistry.debarshi.currentPodiumStreak, last: workingRegistry.debarshi.currentLastStreak },
-                sandy: { win: workingRegistry.sandy.currentWinStreak, podium: workingRegistry.sandy.currentPodiumStreak, last: workingRegistry.sandy.currentLastStreak },
-                soumik: { win: workingRegistry.soumik.currentWinStreak, podium: workingRegistry.soumik.currentPodiumStreak, last: workingRegistry.soumik.currentLastStreak },
-                arkadeep: { win: workingRegistry.arkadeep.currentWinStreak, podium: workingRegistry.arkadeep.currentPodiumStreak, last: workingRegistry.arkadeep.currentLastStreak }
-            };
-
-            rows.forEach(round => {
-                const dayScoresRaw = [
-                    { id: "srijit", score: round.srijit_score },
-                    { id: "bitansh", score: round.bitansh_score },
-                    { id: "debarshi", score: round.debarshi_score },
-                    { id: "sandy", score: round.sandy_score },
-                    { id: "soumik", score: round.soumik_score },
-                    { id: "arkadeep", score: round.arkadeep_score }
-                ];
-
-                const dayScores = dayScoresRaw.filter(x => x.score !== null && x.score !== undefined);
-                const participantCount = dayScores.length;
-
-                dayScores.forEach(obj => {
-                    if (obj.score >= 400) workingRegistry[obj.id].m400++;
-                    if (obj.score >= 350) workingRegistry[obj.id].m350++;
-                    if (obj.score >= 300) workingRegistry[obj.id].m300++;
-                    
-                    workingRegistry[obj.id].lastScores.push(obj.score);
-                    if (workingRegistry[obj.id].lastScores.length > 3) {
-                        workingRegistry[obj.id].lastScores.shift();
-                    }
-                });
-
-                dayScores.sort((a,b) => b.score - a.score);
-                
-                if (participantCount <= 5) {
-                    dayScores.forEach((team, idx) => {
-                        if (idx === 0) workingRegistry[team.id].r1++;
-                        if (idx === 1) workingRegistry[team.id].r2++;
-                        if (idx === 2) workingRegistry[team.id].r3++;
-                        if (idx === 3) workingRegistry[team.id].r4++;
-                        if (idx === 4) workingRegistry[team.id].r5++;
-                    });
-                } else if (participantCount === 6) {
-                    dayScores.forEach((team, idx) => {
-                        if (idx === 0) workingRegistry[team.id].r1++;
-                        if (idx === 1) workingRegistry[team.id].r2++;
-                        if (idx === 2) workingRegistry[team.id].r3++;
-                        if (idx === 3) workingRegistry[team.id].r4++;
-                        if (idx === 4) workingRegistry[team.id].r5++;
-                        if (idx === 5) workingRegistry[team.id].r6++;
-                    });
-                }
-
-                Object.keys(streakTracker).forEach(id => {
-                    const hasPlayed = dayScores.some(x => x.id === id);
-                    if (!hasPlayed) return;
-
-                    const dailyRank = dayScores.findIndex(x => x.id === id) + 1;
-                    
-                    if (dailyRank === 1) {
-                        streakTracker[id].win++;
-                        if (streakTracker[id].win === 3) {
-                            workingRegistry[id].bonus += 15;
-                            streakTracker[id].win = 0;
-                        }
-                    } else { streakTracker[id].win = 0; }
-
-                    if (dailyRank <= 3) {
-                        streakTracker[id].podium++;
-                        if (streakTracker[id].podium === 3) {
-                            workingRegistry[id].bonus += 7;
-                            streakTracker[id].podium = 0;
-                        }
-                    } else { streakTracker[id].podium = 0; }
-
-                    if (dailyRank === participantCount) {
-                        streakTracker[id].last++;
-                        if (streakTracker[id].last === 3) {
-                            workingRegistry[id].bonus -= 5;
-                            streakTracker[id].last = 0;
-                        }
-                    } else { streakTracker[id].last = 0; }
-
-                    workingRegistry[id].currentWinStreak = streakTracker[id].win;
-                    workingRegistry[id].currentPodiumStreak = streakTracker[id].podium;
-                    workingRegistry[id].currentLastStreak = streakTracker[id].last;
-                });
-
-                if (round.captain_bonus_club && workingRegistry[round.captain_bonus_club]) {
-                    workingRegistry[round.captain_bonus_club].bonus += 3;
-                }
-            });
-
-            return evaluateStandingsData(Object.values(workingRegistry));
-        }
-
-        function evaluateStandingsData(clubs) {
-            let parsed = clubs.map(club => {
-                const standardBasePoints = (club.r1 * 15) + (club.r2 * 10) + (club.r3 * 6) + (club.r4 * 2) + (club.r5 * 0) + (club.r6 * 0);
-                const finalTotalPoints = standardBasePoints + club.bonus;
-                const matchesPlayed = club.r1 + club.r2 + club.r3 + club.r4 + club.r5 + club.r6;
-                const averagePoints = matchesPlayed > 0 ? (finalTotalPoints / matchesPlayed) : 0;
-                
-                const winPctNumeric = matchesPlayed > 0 ? ((club.r1 / matchesPlayed) * 100).toFixed(0) : 0;
-                const podiumPctNumeric = matchesPlayed > 0 ? (((club.r1 + club.r2 + club.r3) / matchesPlayed) * 100).toFixed(0) : 0;
-
-                const lastPlacementsCount = club.r5 + club.r6;
-                const consistencyRating = matchesPlayed > 0 ? (((matchesPlayed - lastPlacementsCount) / matchesPlayed) * 100).toFixed(0) : 0;
-
-                const sumScores = club.lastScores.reduce((sum, val) => sum + val, 0);
-                const avgFormScore = club.lastScores.length > 0 ? (sumScores / club.lastScores.length) : 0;
-                const formRating = Math.min(Math.max(Math.round((avgFormScore / 400) * 100), 10), 99);
-
-                const visionRating = Math.min(Math.max(Math.round(50 + (club.bonus * 2)), 10), 99);
-
-                return {
-                    ...club,
-                    mp: matchesPlayed,
-                    total: finalTotalPoints,
-                    avg: averagePoints.toFixed(2),
-                    winPct: parseInt(winPctNumeric),
-                    podiumPct: parseInt(podiumPctNumeric),
-                    conRating: parseInt(consistencyRating),
-                    frmRating: formRating,
-                    visRating: visionRating
-                };
-            }).sort((a, b) => b.avg - a.avg);
-
-            let highest1sts = -1, serialWinner = "-";
-            let highestPodiums = -1, podiumKing = "-";
-            let highestFourths = -1, escapeArtist = "-";
-            let highestGutter = -1, bottomDanger = "-";
-
-            parsed.forEach(c => {
-                let podiumsCount = c.r1 + c.r2 + c.r3;
-                let gutterCombined = c.r5 + c.r6; 
-
-                if(c.r1 > highest1sts) { highest1sts = c.r1; serialWinner = `${c.name} (${c.r1})`; }
-                if(podiumsCount > highestPodiums) { highestPodiums = podiumsCount; podiumKing = `${c.name} (${podiumsCount})`; }
-                if(c.r4 > highestFourths) { highestFourths = c.r4; escapeArtist = `${c.name} (${c.r4})`; }
-                if(gutterCombined > highestGutter) { highestGutter = gutterCombined; bottomDanger = `${c.name} (${gutterCombined})`; }
-            });
-            
-            document.getElementById("serialWinnerField").innerText = serialWinner;
-            document.getElementById("highestPodiumsField").innerText = podiumKing;
-            document.getElementById("escapeArtistField").innerText = escapeArtist;
-            document.getElementById("bottomContainmentField").innerText = bottomDanger;
-
-            return parsed;
-        }
-
-        function updateDashboardLayout(data, globalRound) {
-            compiledStandings = data;
-            
-            document.getElementById("latestGlobalRound").innerText = `Global Camp: Final Standings (${globalRound} Rounds)`;
-
-            const tableContainer = document.getElementById("leagueRows");
-            tableContainer.innerHTML = "";
-            data.forEach((club, index) => {
-                const tr = document.createElement("tr");
-                tr.className = "interactive-row";
-                tr.setAttribute("onclick", `activateScoutSpotlight('${club.id}', this, ${index + 1})`);
-                
-                let titleBadge = "";
-                if (index === 0) titleBadge = " 👑 <small style='color:var(--podium-gold); font-weight:800;'>(CHAMPION)</small>";
-                else if (index === 1) titleBadge = " 🥈 <small style='color:var(--podium-silver); font-weight:800;'>(RUNNER UP)</small>";
-                else if (index === 2) titleBadge = " 🥉 <small style='color:var(--podium-bronze); font-weight:800;'>(2ND RUNNER UP)</small>";
-
-                tr.innerHTML = `
-                    <td class="text-center"><span class="rank-box">${index + 1}</span></td>
-                    <td class="club-title">${club.name}${titleBadge}</td>
-                    <td class="text-center" style="font-weight: 600; color: var(--text-muted);">${club.mp}</td>
-                    <td class="text-center">${club.r1}</td>
-                    <td class="text-center">${club.r2}</td>
-                    <td class="text-center">${club.r3}</td>
-                    <td class="text-center">${club.r4}</td>
-                    <td class="text-center">${club.r5}</td>
-                    <td class="text-center ${club.r6 > 0 ? 'text-danger' : ''}">${club.r6}</td>
-                    <td class="text-center"><span class="bonus-badge">${club.bonus >= 0 ? '+' : ''}${club.bonus}</span></td>
-                    <td class="text-center"><span class="score-badge">${club.avg}</span></td>
-                    <td class="text-right" style="font-weight: 800; color: var(--text-main); font-family: 'Rajdhani'; font-size:1.15rem;">${club.total}</td>
-                `;
-                tableContainer.appendChild(tr);
-            });
-
-            const streakWrapper = document.getElementById("streakWatchoutContainer");
-            streakWrapper.innerHTML = "";
-            
-            data.forEach(club => {
-                if (club.currentWinStreak > 0 || club.currentPodiumStreak > 0 || club.currentLastStreak > 0) {
-                    const row = document.createElement("div");
-                    row.className = "streak-row-item";
-                    
-                    let pillsHtml = "";
-                    if (club.currentWinStreak > 0) {
-                        pillsHtml += `<span class="streak-pill-item streak-win">${club.currentWinStreak}x Win Streak</span>`;
-                    }
-                    if (club.currentPodiumStreak > 0) {
-                        pillsHtml += `<span class="streak-pill-item ${club.currentPodiumStreak >= 3 ? 'streak-podium blink-critical-text' : 'streak-podium'}">${club.currentPodiumStreak}x Podium Streak</span>`;
-                    }
-                    if (club.currentLastStreak > 0) {
-                        pillsHtml += `<span class="streak-pill-item ${club.currentLastStreak >= 2 ? 'streak-last blink-critical-text' : 'streak-last'}">${club.currentLastStreak}x Last Place Slump</span>`;
-                    }
-
-                    row.innerHTML = `
-                        <div class="streak-club-info">${club.name}</div>
-                        <div class="streak-pills-holder">${pillsHtml}</div>
-                    `;
-                    streakWrapper.appendChild(row);
-                }
-            });
-
-            const milestoneContainer = document.getElementById("milestoneRows");
-            milestoneContainer.innerHTML = "";
-            data.forEach(club => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td class="club-title">${club.name}</td>
-                    <td class="text-center font-weight-bold" style="color:var(--text-white);">${club.m300 || '-'}</td>
-                    <td class="text-center font-weight-bold" style="color:var(--text-muted);">${club.m350 || '-'}</td>
-                    <td class="text-center ${club.m400 > 0 ? 'score-badge' : ''}" style="max-width:80px; margin:auto;">${club.m400 || '-'}</td>
-                    <td class="text-center">-</td>
-                `;
-                milestoneContainer.appendChild(tr);
-            });
-
-            const leaderDelta = (data[0].avg - data[1].avg).toFixed(2);
-            const secondaryDelta = (data[1].avg - data[2].avg).toFixed(2);
-            
-            document.getElementById("tickerDeltas").innerText = `🏆 FINAL RESULTS: ${data[0].name} finishes 1st with ${data[0].avg} Pts/Round • Victory gap over 2nd place ${data[1].name} is ${leaderDelta} Avg Pts • Bronze threshold margin stands at ${secondaryDelta} Pts.`;
-
-            const radarContainer = document.getElementById("radarContainer");
-            radarContainer.innerHTML = `
-                <div style="background: rgba(14,21,38,0.5); border: 1px solid var(--podium-gold); padding: 1.2rem; border-radius: 12px; box-shadow: var(--podium-gold-glow);">
-                    <div style="font-weight: 700; font-family:'Rajdhani'; color: var(--podium-gold); font-size:1.2rem;">${data[0].name} (Champion) vs ${data[1].name} (Runner Up)</div>
-                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem; line-height:1.5;">Title Decider Delta: ${data[0].name} sealed the tournament by a decisive <strong>${leaderDelta} Average Points</strong> margin over ${data[1].name}.</div>
-                </div>
-                <div style="background: rgba(14,21,38,0.5); border: 1px solid var(--border-neon); padding: 1.2rem; border-radius: 12px; box-shadow: var(--cyber-cyan-glow);">
-                    <div style="font-weight: 700; font-family:'Rajdhani'; color: var(--cyber-cyan); font-size:1.2rem;">${data[1].name} vs ${data[2].name} (2nd Runner Up)</div>
-                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem; line-height:1.5;">Podium Split: 2nd and 3rd place finishes concluded within a gap of <strong>${secondaryDelta} Average Points</strong>.</div>
-                </div>
-            `;
-        }
-
-        function toggleView(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-
-            ['championship-tab', 'milestone-tab', 'radar-tab'].forEach(id => {
-                document.getElementById(id).classList.add('hidden-view');
-            });
-            document.getElementById(tabId).classList.remove('hidden-view');
-        }
-
-        function activateScoutSpotlight(clubId, elementRow, currentRank) {
-            document.querySelectorAll("#leagueRows tr").forEach(r => r.classList.remove("active-row"));
-            elementRow.classList.add("active-row");
-
-            const selectedTeam = compiledStandings.find(c => c.id === clubId);
-            if(selectedTeam) {
-                document.getElementById("spotlightPromptText").classList.add("hidden-view");
-                const cardContainer = document.getElementById("futCardContainer");
-                const cardBody = document.getElementById("futCardBody");
-                
-                cardContainer.classList.remove("hidden-view");
-                
-                const overallRating = Math.round((selectedTeam.winPct + selectedTeam.podiumPct + selectedTeam.frmRating + selectedTeam.visRating) / 4);
-
-                let rankEmblem = "⚽";
-                if(currentRank === 1) { rankEmblem = "👑"; cardBody.className = "fut-card gold-tier"; }
-                else if(currentRank === 2) { rankEmblem = "🥈"; cardBody.className = "fut-card"; }
-                else if(currentRank === 3) { rankEmblem = "🥉"; cardBody.className = "fut-card"; }
-                else if(currentRank === 6) { rankEmblem = "🥄"; cardBody.className = "fut-card"; }
-                else { cardBody.className = "fut-card"; }
-
-                document.getElementById("futRankBadge").innerText = rankEmblem;
-                document.getElementById("futOvr").innerText = overallRating;
-                document.getElementById("futName").innerText = selectedTeam.name;
-                document.getElementById("futVic").innerText = selectedTeam.winPct;
-                document.getElementById("futPod").innerText = selectedTeam.podiumPct;
-                document.getElementById("futFrm").innerText = selectedTeam.frmRating;
-                document.getElementById("futVis").innerText = selectedTeam.visRating;
-                document.getElementById("futTotalPoints").innerText = selectedTeam.total;
-                document.getElementById("futMatches").innerText = selectedTeam.mp;
-            }
-        }
-
-        runChampionshipEngine();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
