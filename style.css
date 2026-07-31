@@ -1,162 +1,162 @@
-/* Basic resets */
+/* --- 1. Global Variables & Resets --- */
+:root {
+    /* Base Palette */
+    --bg-main: #05070f;
+    --bg-panel: #0c101d;
+    --glass-panel: rgba(14, 23, 46, 0.85);
+    
+    /* Neon Accents */
+    --border-dark: #1d355a;
+    --turf-green: #00FF66;
+    --turf-glow: 0 0 15px rgba(0, 255, 102, 0.4);
+    --cyber-blue: #00E5FF;
+    --cyber-glow: 0 0 15px rgba(0, 229, 255, 0.4);
+    --alert-red: #FF3366;
+    --alert-glow: 0 0 15px rgba(255, 51, 102, 0.4);
+    
+    /* The Metals */
+    --gold: #FFD700;
+    --gold-glow: 0 0 20px rgba(255, 215, 0, 0.5);
+    --silver: #E0E0E0;
+    --bronze: #CD7F32;
+    
+    /* Typography */
+    --text-light: #FFFFFF;
+    --text-dim: #8FA3BF;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent; /* Fix for mobile tap flashes */
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f4f7f6;
-    color: #333;
-    line-height: 1.6;
-    padding: 20px;
+    background-color: var(--bg-main);
+    color: var(--text-light);
+    min-height: 100vh;
+    /* Custom grid pattern for the cyber turf feel */
+    background-image: 
+        radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.12), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(0, 255, 102, 0.04), transparent 40%),
+        linear-gradient(rgba(255, 255, 255, 0.003) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.003) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 45px 45px, 45px 45px;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
+/* Helper text colors */
+.clr-turf { color: var(--turf-green); }
+.clr-cyan { color: var(--cyber-blue); }
+.clr-danger { color: var(--alert-red); }
+.clr-gold { color: var(--gold); }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.hidden-view { display: none !important; }
 
-/* Header styling */
-.site-header {
-    background-color: #2c3e50;
-    color: #fff;
-    padding: 20px 30px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.site-header h1 {
-    margin-bottom: 5px;
-    font-size: 24px;
-}
-
-#round-indicator {
-    color: #bdc3c7;
-    font-size: 14px;
-}
-
-/* Grid layout for main content */
-.content-grid {
+/* --- 2. Live Ticker Component --- */
+.live-ticker {
+    background: #010307;
+    border-bottom: 1px solid var(--gold);
+    padding: 12px 16px;
+    overflow: hidden;
+    white-space: nowrap;
     display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
+    align-items: center;
+    gap: 16px;
 }
 
-.leaderboard-section {
-    flex: 2;
-    min-width: 600px;
-    background: #fff;
+.ticker-badge {
+    background: var(--gold);
+    color: #000;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    flex-shrink: 0;
+}
+
+/* pure CSS marquee trick */
+.ticker-wrap {
+    display: inline-block;
+    animation: scroll-left 32s linear infinite;
+    color: var(--gold);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+@keyframes scroll-left {
+    0% { transform: translateX(60%); }
+    100% { transform: translateX(-100%); }
+}
+
+/* --- 3. Main Layout & Header --- */
+.wrapper {
+    max-width: 1450px;
+    margin: 0 auto;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.stats-sidebar {
-    flex: 1;
-    min-width: 300px;
+header {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    padding: 24px;
+    background: linear-gradient(180deg, var(--bg-panel), rgba(11, 15, 25, 0.6));
+    border: 1px solid var(--gold);
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: var(--gold-glow);
 }
 
-.section-heading {
+/* Responsive header fix */
+@media(min-width: 768px) {
+    header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.brand-zone {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
+    gap: 12px;
 }
 
-.status-text {
-    font-size: 12px;
-    color: #27ae60;
-    font-weight: bold;
+.pulse-dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--gold);
+    animation: breathingGlow 2s infinite;
 }
 
-/* Table styling */
-.table-responsive {
-    overflow-x: auto;
+@keyframes breathingGlow {
+    0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.5); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px transparent; }
+    100% { transform: scale(0.9); box-shadow: 0 0 0 0 transparent; }
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th, td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background-color: #f8f9fa;
-    color: #555;
+header h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
     text-transform: uppercase;
-    font-size: 12px;
+    letter-spacing: 1px;
 }
 
-tr:nth-child(even) {
-    background-color: #fafafa;
+header h1 span {
+    color: var(--gold);
+    text-shadow: var(--gold-glow);
 }
 
-tr:hover {
-    background-color: #f1f1f1;
-}
-
-/* Sidebar cards */
-.stat-card {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.stat-card h3 {
-    margin-bottom: 15px;
-    font-size: 16px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-
-.record-list {
-    list-style: none;
-}
-
-.record-list li {
-    margin-bottom: 10px;
-    font-size: 14px;
-}
-
-.rules-card p, .rules-card ul {
-    font-size: 13px;
-    color: #666;
-}
-
-.rules-card ul {
-    margin-top: 10px;
-    padding-left: 20px;
-}
-
-.streak-item {
-    background: #e8f4f8;
-    border-left: 4px solid #3498db;
-    padding: 10px;
-    margin-bottom: 10px;
-    font-size: 14px;
-    border-radius: 0 4px 4px 0;
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
-    .content-grid {
-        flex-direction: column;
-    }
-    .leaderboard-section, .stats-sidebar {
-        min-width: 100%;
-    }
-}
+.global-round-status {
+    font-family: 'Rajdhani', sans-serif;
+ 
