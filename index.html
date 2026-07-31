@@ -3,71 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fantasy Championship</title>
+    <title>Fantasy Contest</title>
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23050811' stroke='%23FFD700' stroke-width='4'/><path d='M50 25 L30 40 L38 65 L62 65 L70 40 Z' fill='none' stroke='%23FFD700' stroke-width='3'/><path d='M50 4 L50 25 M14 30 L30 40 M30 92 L38 65 M70 92 L62 65 M86 30 L70 40' stroke='%23FFD700' stroke-width='3'/></svg>">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="container">
-        <header class="site-header">
-            <h1>Championship Leaderboard</h1>
-            <p id="round-indicator">Loading current round data...</p>
+
+    <div class="live-ticker">
+        <span class="ticker-badge">🏆 OFFICIAL CHAMPIONS</span>
+        <div class="ticker-wrap" id="tickerDeltas">
+            🏆 TOURNAMENT CONCLUDED — SRIJIT FC CROWNED CHAMPIONS! BITANSH FC RUNNER UP — SANDY FC 2ND RUNNER UP! 🏆
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <header>
+            <div class="brand-zone">
+                <div class="pulse-dot"></div>
+                <h1>Sorare <span>World Cup</span> Terminal</h1>
+            </div>
+            <div class="global-round-status" id="latestGlobalRound">
+                Global Camp: Tournament Concluded
+            </div>
+            <nav class="nav-tabs">
+                <button class="tab-btn active" onclick="toggleView('championship-tab')">Home Arena</button>
+                <button class="tab-btn" onclick="toggleView('milestone-tab')">Milestone Matrix</button>
+                <button class="tab-btn" onclick="toggleView('radar-tab')">Tactical Derby Radar</button>
+            </nav>
         </header>
 
-        <main class="content-grid">
-            <section class="leaderboard-section">
-                <div class="section-heading">
-                    <h2>Current Standings</h2>
-                    <span id="sync-status" class="status-text">Connecting to database...</span>
+        <div class="champions-banner">
+            <h2 class="champions-title">🏆 Hall of Champions & Official Final Podium 🏆</h2>
+            <div class="podium-grid">
+                <div class="podium-card runner-up">
+                    <div class="podium-rank">🥈</div>
+                    <div class="podium-team-name">Bitansh FC</div>
+                    <div class="podium-title-tag">Official Runner Up</div>
                 </div>
-                
-                <div class="table-responsive">
-                    <table id="standings-table">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Manager</th>
-                                <th>Played</th>
-                                <th>1st</th>
-                                <th>2nd</th>
-                                <th>3rd</th>
-                                <th>Bonus</th>
-                                <th>Avg Pts</th>
-                                <th>Total Pts</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body">
-                            </tbody>
-                    </table>
+                <div class="podium-card winner">
+                    <div class="podium-rank">👑 🥇</div>
+                    <div class="podium-team-name">Srijit FC</div>
+                    <div class="podium-title-tag">Grand Champion</div>
                 </div>
-            </section>
+                <div class="podium-card second-runner-up">
+                    <div class="podium-rank">🥉</div>
+                    <div class="podium-team-name">Sandy FC</div>
+                    <div class="podium-title-tag">2nd Runner Up</div>
+                </div>
+            </div>
+        </div>
 
-            <aside class="stats-sidebar">
-                <div class="stat-card">
-                    <h3>=> Hall of Records</h3>
-                    <ul class="record-list">
-                        <li><strong>Highest Single Round:</strong> 424 Pts (Bitansh FC)</li>
-                        <li><strong>Serial Winner:</strong> <span id="rec-wins">-</span></li>
-                        <li><strong>Most Podiums:</strong> <span id="rec-podiums">-</span></li>
-                        <li><strong>Most Last Places:</strong> <span id="rec-last">-</span></li>
-                    </ul>
-                </div>
+        <div class="press-room-banner" id="pressRoomSection">
+            <h3 class="press-room-title">🎤 Post-Match Press Room // Winner Commentary</h3>
+            <p class="press-room-quote" id="winnerQuoteField">"Points fade into the background of history, but the clarity of vision remains immortal" — Srijit FC (Champion)</p>
+        </div>
 
-                <div class="stat-card">
-                    <h3>=> Active Streaks</h3>
-                    <div id="streak-container">
-                        <p class="empty-state">No active streaks to display.</p>
+        <main class="main-layout">
+            
+            <section class="left-col">
+                <div id="championship-tab" class="data-card">
+                    <div class="card-header">
+                        <h2>🏆 Final Championship Leaderboard</h2>
+                        <span id="syncIndicator" class="sync-status">Status: Final Standings Locked</span>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Rank</th>
+                                    <th>Club Squad</th>
+                                    <th class="text-center">MP</th>
+                                    <th class="text-center">1st</th>
+                                    <th class="text-center">2nd</th>
+                                    <th class="text-center">3rd</th>
+                                    <th class="text-center">4th</th>
+                                    <th class="text-center">5th</th>
+                                    <th class="text-center">6th</th>
+                                    <th class="text-center">Bonus Pts</th>
+                                    <th class="text-center">Avg Pts</th>
+                                    <th class="text-right">Total Pts</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leagueRows"></tbody>
+                        </table>
                     </div>
                 </div>
 
-                <div class="stat-card rules-card">
-                    <h3>=> Point System</h3>
-                    <p>Standard scale: 15, 10, 6, 4, 0. Adjusted dynamically for 6 players.</p>
-                    <ul>
-                        <li>3x Win Streak: +15 pts</li>
-                        <li>3x Podium Streak: +7 pts</li>
-                        <li>3x Last Place: -5 pts</li>
-                        <li>Captain Win: +3 pts</li>
+                <div class="data-card">
+                    <div class="card-header">
+                        <h2>⚡ Final Season Streak Radar</h2>
+                        <span class="sub-label">End of Campaign Hot/Cold Records</span>
+                    </div>
+                    <div class="streak-container-box" id="streakWatchoutContainer"></div>
+                </div>
+
+                <div id="milestone-tab" class="data-card hidden-view">
+                    <div class="card-header">
+                        <h2>⚡ Raw Gameweek Frequencies</h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Club Squad</th>
+                                    <th class="text-center">300+ Tier</th>
+                                    <th class="text-center">350+ Tier</th>
+                                    <th class="text-center">400+ Tier</th>
+                                    <th class="text-center">450+ Tier</th>
+                                </tr>
+                            </thead>
+                            <tbody id="milestoneRows"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="radar-tab" class="data-card hidden-view">
+                    <div class="card-header">
+                        <h2>⚔️ Championship Micro-Derbies</h2>
+                    </div>
+                    <div class="radar-grid" id="radarContainer"></div>
+                </div>
+            </section>
+
+            <aside class="right-col">
+                <div class="data-card">
+                    <div class="card-header"><h2>📊 Adaptive Points Guide</h2></div>
+                    <div class="guide-section">
+                        <h4>Dynamic Distribution Scale</h4>
+                        <p>🔹 <b>5 Participants:</b> 15, 10, 6, 4, 0<br>
+                           🔹 <b>6 Participants:</b> 15, 10, 6, 3, 1, 0</p>
+                    </div>
+                    <div class="guide-section">
+                        <h4>Tactical Streak System</h4>
+                        <p>
+                            🔥 3x Victory Streak: <b class="clr-turf">+15 Pts</b><br>
+                            ⚡ 3x Podium Streak: <b class="clr-cyan">+7 Pts</b><br>
+                            ⚠️ 3x Last Place Streak: <b class="clr-danger">-5 Pts</b><br>
+                            👑 Captain Match Winner: <b class="clr-gold">+3 Pts</b>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="data-card">
+                    <div class="card-header"><h2>🔎 Interactive FUT Dossier</h2></div>
+                    <div id="spotlightContent">
+                        <p class="prompt-text" id="spotlightPromptText">Select a manager row from the table grid to materialize their FUT gaming card metrics.</p>
+                        
+                        <div class="fut-card-wrapper hidden-view" id="futCardContainer">
+                            <div class="fut-card" id="futCardBody">
+                                <div class="fut-header">
+                                    <div class="fut-ovr-box">
+                                        <div class="fut-ovr-val" id="futOvr">-</div>
+                                        <div class="fut-pos-label">MGR</div>
+                                    </div>
+                                    <div class="fut-badge-slot" id="futRankBadge">⚽</div>
+                                </div>
+                                <div class="fut-avatar-hull">
+                                    <div class="fut-silhouette-vector"></div>
+                                </div>
+                                <div class="fut-manager-title" id="futName">-</div>
+                                <div class="fut-stats-grid">
+                                    <div class="fut-stat-item"><span class="fut-stat-lbl">VIC</span><span class="fut-stat-val" id="futVic">-</span></div>
+                                    <div class="fut-stat-item"><span class="fut-stat-lbl">POD</span><span class="fut-stat-val" id="futPod">-</span></div>
+                                    <div class="fut-stat-item"><span class="fut-stat-lbl">FRM</span><span class="fut-stat-val" id="futFrm">-</span></div>
+                                    <div class="fut-stat-item"><span class="fut-stat-lbl">VIS</span><span class="fut-stat-val" id="futVis">-</span></div>
+                                </div>
+                                <div class="fut-stats-filler">
+                                    <span>PTS: <b id="futTotalPoints">-</b></span>
+                                    <span>MP: <b id="futMatches">-</b></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-card records-card">
+                    <div class="card-header"><h2>⭐ Hall of Records & Cabinet</h2></div>
+                    
+                    <div class="record-highlight">
+                        <span class="rec-label">All-Time Single Round Peak</span>
+                        <div class="rec-value">424 POINTS</div>
+                        <div class="rec-holder">Bitansh FC</div>
+                    </div>
+                    <div class="record-sub">
+                        🥈 Debarshi FC: <b>415 Pts</b> | 🥉 Sandy FC: <b>412 Pts</b>
+                    </div>
+                    
+                    <ul class="record-list">
+                        <li>
+                            <span class="rec-name">🏆 Serial Winner (Most 1sts)</span>
+                            <span class="rec-stat clr-turf" id="serialWinnerField">-</span>
+                        </li>
+                        <li>
+                            <span class="rec-name">🥇 Highest Podiums (Top 3s)</span>
+                            <span class="rec-stat clr-cyan" id="highestPodiumsField">-</span>
+                        </li>
+                        <li>
+                            <span class="rec-name">Gutter Escape Expert (Most 4ths)</span>
+                            <span class="rec-stat" style="color:#FFA500" id="escapeArtistField">-</span>
+                        </li>
+                        <li class="no-border">
+                            <span class="rec-name">☠️ Bottom Containment Risk</span>
+                            <span class="rec-stat clr-danger" id="bottomContainmentField">-</span>
+                        </li>
                     </ul>
                 </div>
             </aside>
