@@ -1,40 +1,23 @@
-# sorare-world-cup
+# Fantasy Championship
 
-This is a mobile-friendly analytics dashboard and automated data input terminal created for a 40-round 5-a-side Sorare football tournament. The application removes the need for manual code updates by using a serverless cloud database backend, which processes daily raw scores, evaluates tournament standings in real-time, and provides insights on performance.
+A custom leaderboard and tracking dashboard built for my friend group's private Sorare 5-a-side tournament. 
 
----
+We needed a way to track our weekly scores that wasn't just a messy spreadsheet, especially since we have custom rules for streaks and dynamic point allocations depending on if 5 or 6 people play in a given gameweek.
 
-## The Championship Scoring Engine
+## Features
+* **Dynamic Points System:** Automatically scales the Formula 1-style points distribution (15, 10, 6, 4, 0) depending on weekly participation.
+* **Streak Tracking:** Monitors 3-week win streaks, podium streaks, and last-place slumps.
+* **Captain Bonus:** Awards +3 points to the manager whose captain performed the best that week.
+* **Admin Portal:** A simple hidden form to submit weekly scores from a phone directly to the database.
 
-To keep the competition exciting throughout the tournament, this league uses a grading system inspired by Formula 1. Positions are evaluated automatically based on the daily raw scores entered through the admin panel:
+## Tech Stack
+* **Frontend:** HTML5, CSS3, Vanilla JavaScript (No frameworks)
+* **Backend/Database:** Supabase
+* **Hosting:** Netlify
 
-* 1st Place: 15 Points
-* 2nd Place: 10 Points
-* 3rd Place: 6 Points
-* 4th Place: 2 Points
-* 5th Place: 0 Points
-
-### The Ranking Philosophy
-
-Instead of adding up points like standard tournaments, this terminal determines rankings based solely on Average Points per Round. 
-* Formula: Average Points = Total Points / Rounds Played
-
-This approach rewards efficiency and encourages strategic winning. It also adjusts the standings based on the number of matchdays managers have participated in.
-
----
-
-## Main Systems & Visual Features
-
-* Cyber Stadium Theme: A high-contrast "Pitch Black & Neon Turf" user interface with responsive glassmorphic card containers, bright glowing borders, and smooth hover effects.
-* Mobile-First Blueprint: An adaptive design with fluid flex-wrapping and swipe-friendly navigation, perfectly suited for smartphone use.
-* Interactive Scouting Dossier: Live DOM element manipulation lets users click or tap any club row to instantly gather win conversion rates, podium indices, and tactical traits in the sidebar.
-* Milestone Breakout Matrix: Tracks significant achievements in individual gameweeks, focusing on the 300+, 350+, and 400+ point levels.
-* Tactical Derby Radar: Measures real-time calculations to highlight gaps between title contenders and mid-table teams.
-
----
-
-## Tech Stack & Architecture
-
-* Frontend: Semantic HTML5, CSS3 Grid/Flexbox layouts, Vanilla JavaScript ES6+ (Async/Await engine).
-* Backend Database: Supabase (PostgreSQL relational cloud database connecting through direct REST API).
-* Hosting Engine: Netlify (Continuous integration pipeline connected to GitHub repository branches).
+## Setup Instructions
+If you want to fork this for your own league:
+1. Set up a Supabase project and create a table named `matchdays`.
+2. Add columns for `round_number` (int), `captain_bonus_club` (text), and int columns for each manager's score.
+3. Add your Supabase URL and Anon Key to the constants at the top of the `script.js` and `admin.html` files.
+4. Deploy the folder to Netlify or GitHub Pages.
